@@ -1,0 +1,28 @@
+{
+  "name": "vcn/enum",
+  "type": "library",
+  "description": "Enumeration data types with pattern match operations.",
+  "license": "MIT",
+
+  "autoload": {
+    "psr-4": {
+      "Vcn\\Lib\\": "src"
+    }
+  },
+
+  "autoload-dev": {
+    "psr-4": {
+      "Vcn\\Lib\\": "tests"
+    }
+  },
+
+  "require": {
+    "php": "^5.4 || ^7.0",
+
+    "ext-json": "*"
+  },
+
+  "require-dev": {
+    "phpunit/phpunit": "~4.8"
+  }
+}
