@@ -4,7 +4,7 @@ Enumeration data types with pattern match operations.
 
 ## Quickstart
 
-`composer install vcn/enum`
+`composer require vcn/enum`
 
 ```php
 <?php
