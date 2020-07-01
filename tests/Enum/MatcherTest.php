@@ -3,18 +3,19 @@
 namespace Vcn\Lib\Enum;
 
 use Exception;
-use PHPUnit_Framework_TestCase;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use Vcn\Lib\Enum;
 use Vcn\Lib\EnumTest\Fruit;
 use Vcn\Lib\EnumTest\Vegetables;
 
-class MatcherTest extends PHPUnit_Framework_TestCase
+class MatcherTest extends TestCase
 {
     /**
      * @test
      */
     public function testGet()
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::CAULIFLOWER());
 
         $matcher
@@ -23,7 +24,6 @@ class MatcherTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(0, $matcher->get());
 
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::SPINACH());
 
         $matcher
@@ -32,7 +32,6 @@ class MatcherTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(1, $matcher->get());
 
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::SPINACH());
 
         $matcher
@@ -44,17 +43,16 @@ class MatcherTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Vcn\Lib\Enum\Matcher\Exception\MatchExhausted
      */
     public function testGetOnIncompleteMap()
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::SPINACH());
 
-        $matcher
-            ->when(Vegetables::CAULIFLOWER(), 0);
+        $this->expectException(Enum\Matcher\Exception\MatchExhausted::class);
 
-        $matcher->get();
+        $matcher
+            ->when(Vegetables::CAULIFLOWER(), 0)
+            ->get();
     }
 
     /**
@@ -62,7 +60,6 @@ class MatcherTest extends PHPUnit_Framework_TestCase
      */
     public function testOrElse()
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::CAULIFLOWER());
 
         $matcher
@@ -70,7 +67,6 @@ class MatcherTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(0, $matcher->orElse(1));
 
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::SPINACH());
 
         $matcher
@@ -84,7 +80,6 @@ class MatcherTest extends PHPUnit_Framework_TestCase
      */
     public function testOrElseDo()
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::CAULIFLOWER());
 
         $actual =
@@ -98,7 +93,6 @@ class MatcherTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(0, $actual);
 
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::SPINACH());
 
         $actual =
@@ -115,12 +109,12 @@ class MatcherTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function testOrElseDoWithValue()
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::CAULIFLOWER());
+
+        $this->expectException(InvalidArgumentException::class);
 
         /** @noinspection PhpParamsInspection */
         $matcher
@@ -129,12 +123,12 @@ class MatcherTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function testInconsistentMap()
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::CAULIFLOWER());
+
+        $this->expectException(InvalidArgumentException::class);
 
         $matcher
             ->when(Vegetables::CAULIFLOWER(), 0)
@@ -143,12 +137,12 @@ class MatcherTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function testDoubleMap()
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::CAULIFLOWER());
+
+        $this->expectException(InvalidArgumentException::class);
 
         $matcher
             ->when(Vegetables::CAULIFLOWER(), 0)
@@ -157,12 +151,12 @@ class MatcherTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function testDoubleMapWithNull()
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::CAULIFLOWER());
+
+        $this->expectException(InvalidArgumentException::class);
 
         $matcher
             ->when(Vegetables::CAULIFLOWER(), null)
@@ -172,55 +166,11 @@ class MatcherTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function testWhenDo()
-    {
-        /** @noinspection PhpInternalEntityUsedInspection */
-        $matcher = new Matcher(Vegetables::CAULIFLOWER());
-
-        $matcher
-            ->whenDo(
-                Vegetables::CAULIFLOWER(),
-                function () {
-                    return 0;
-                }
-            )
-            ->whenDo(
-                Vegetables::SPINACH(),
-                function () {
-                    throw new Exception('This should not be evaluated.');
-                }
-            );
-
-        $this->assertSame(0, $matcher->get());
-    }
-
-    /**
-     * @test
-     */
-    public function testOrElseDoNothing()
-    {
-
-        /** @noinspection PhpInternalEntityUsedInspection */
-        $matcher = new Matcher(Vegetables::CAULIFLOWER());
-
-        $matcher
-            ->whenDo(
-                Vegetables::SPINACH(),
-                function () {
-                    throw new Exception('This should not be evaluated.');
-                }
-            )
-            ->orElseDoNothing();
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
     public function testWhenDoOnValue()
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $matcher = new Matcher(Vegetables::CAULIFLOWER());
+
+        $this->expectException(InvalidArgumentException::class);
 
         /** @noinspection PhpParamsInspection */
         $matcher

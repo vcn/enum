@@ -1,0 +1,73 @@
+version: '3.7'
+
+services:
+  phpunit-7.2:
+    build:
+      context: docker/phpunit-72-cli
+    environment:
+      COMPOSER_HOME:      /.composer
+      COMPOSER_CACHE_DIR: /.composer-cache
+    volumes:
+      - .:/srv
+      - ${COMPOSER_CACHE_DIR}:/.composer-cache
+    working_dir: /test
+    command: |
+      sh -c '
+        cp -R /srv/* .
+        rm -rf vendor
+        /composer.phar update
+        vendor/bin/phpunit
+      '
+
+  phpunit-7.3:
+    build:
+      context: docker/phpunit-73-cli
+    environment:
+      COMPOSER_HOME:      /.composer
+      COMPOSER_CACHE_DIR: /.composer-cache
+    volumes:
+      - .:/srv
+      - ${COMPOSER_CACHE_DIR}:/.composer-cache
+    working_dir: /test
+    command: |
+      sh -c '
+        cp -R /srv/* .
+        rm -rf vendor
+        /composer.phar update
+        vendor/bin/phpunit
+      '
+  phpunit-7.4:
+    build:
+      context: docker/phpunit-74-cli
+    environment:
+      COMPOSER_HOME:      /.composer
+      COMPOSER_CACHE_DIR: /.composer-cache
+    volumes:
+      - .:/srv
+      - ${COMPOSER_CACHE_DIR}:/.composer-cache
+    working_dir: /test
+    command: |
+      sh -c '
+        cp -R /srv/* .
+        rm -rf vendor
+        /composer.phar update
+        vendor/bin/phpunit
+      '
+
+  phpunit-8.0-rc:
+    build:
+      context: docker/phpunit-80-rc
+    environment:
+      COMPOSER_HOME:      /.composer
+      COMPOSER_CACHE_DIR: /.composer-cache
+    volumes:
+      - .:/srv
+      - ${COMPOSER_CACHE_DIR}:/.composer-cache
+    working_dir: /test
+    command: |
+      sh -c '
+        cp -R /srv/* .
+        rm -rf vendor
+        /composer.phar update --ignore-platform-reqs
+        vendor/bin/phpunit
+      '
