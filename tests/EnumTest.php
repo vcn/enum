@@ -1,24 +1,39 @@
 <?php
 
+/** @noinspection PhpUnhandledExceptionInspection */
+
 namespace Vcn\Lib;
 
-use PHPUnit_Framework_Error_Warning;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use Vcn\Lib\Enum\Exception;
 use Vcn\Lib\EnumTest\Color;
 use Vcn\Lib\EnumTest\Fruit;
 use Vcn\Lib\EnumTest\Silly;
 use Vcn\Lib\EnumTest\Vegetables;
 
-class EnumTest extends \PHPUnit_Framework_TestCase
+class EnumTest extends TestCase
 {
     /**
      * @test
-     * @throws Enum\Exception\InvalidInstance
      */
     public function testSingletonInstances()
     {
         $this->assertSame(Fruit::BANANA(), Fruit::BANANA());
         $this->assertSame(Vegetables::byName('SPINACH'), Vegetables::byName('SPINACH'));
         $this->assertSame(Color::BLUE(), Color::byName('BLUE'));
+    }
+
+    /**
+     * @test
+     */
+    public function testTryByName()
+    {
+        $this->assertSame("CAULIFLOWER", Vegetables::tryByName("CAULIFLOWER")->getName());
+        $this->assertSame("SPINACH", Vegetables::tryByName("SPINACH")->getName());
+        $this->assertSame("APPLE", Fruit::tryByName("APPLE")->getName());
+        $this->assertSame("BANANA", Fruit::tryByName("BANANA")->getName());
+        $this->assertSame(null, Fruit::tryByName("CAULIFLOWER"));
     }
 
     /**
@@ -47,11 +62,12 @@ class EnumTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Vcn\Lib\Enum\Exception\InvalidInstance
      */
     public function testNonExistingName()
     {
         $nonExistingName = implode('', Vegetables::getAllNames());
+
+        $this->expectException(Exception\InvalidInstance::class);
 
         Vegetables::byName($nonExistingName);
     }
@@ -141,38 +157,42 @@ class EnumTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function testEqualsNotWorkingOnTwoDifferentEnums()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         Vegetables::SPINACH()->equals(Fruit::BANANA());
     }
 
     /**
      * @test
-     * @expectedException \Vcn\Lib\Enum\Exception\InvalidInstance
      */
     public function testInvalidEnum()
     {
+        $this->expectException(Exception\InvalidInstance::class);
+
         /** @noinspection PhpUndefinedMethodInspection */
         Vegetables::INVALID();
     }
 
     /**
      * @test
-     * @expectedException PHPUnit_Framework_Error_Warning
      */
     public function testInheritThenInheritAgainProducesWarning()
     {
+        $this->expectWarning();
+
         Silly::GOOSE();
     }
 
     /**
      * @test
-     * @expectedException PHPUnit_Framework_Error_Warning
      */
     public function testInheritThenInheritAgainProducesWarning2()
     {
+        $this->expectWarning();
+
         Silly::CAULIFLOWER();
     }
 }

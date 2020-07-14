@@ -33,18 +33,42 @@ abstract class Enum implements JsonSerializable
 
     /**
      * @param string $name
-     *
-     * @throws Enum\Exception\InvalidInstance
      */
     private function __construct($name)
     {
-        $constants = static::getAllNames();
+        $this->constName = $name;
+    }
 
-        if (in_array($name, $constants)) {
-            $this->constName = $name;
-        } else {
-            throw new Enum\Exception\InvalidInstance(get_called_class(), $name);
+    /**
+     * Attempts to instantiate an Enum from a label name, or return null if the name is not valid.
+     *
+     * For example:
+     *
+     * ```
+     * Fruit::tryByName('APPLE'); // Fruit::APPLE()
+     * Fruit::tryByName('BANANA'); // Fruit::BANANA()
+     * Fruit::tryByName('UNKNOWN'); // null
+     * ```
+     *
+     * @param string $name
+     *
+     * @return null|static
+     */
+    final public static function tryByName($name)
+    {
+        $instances = &static::getInstances();
+
+        if (!array_key_exists($name, $instances)) {
+            $constants = static::getAllNames();
+
+            if (!in_array($name, $constants)) {
+                return null;
+            }
+
+            $instances[$name] = new static($name);
         }
+
+        return $instances[$name];
     }
 
     /**
@@ -66,13 +90,13 @@ abstract class Enum implements JsonSerializable
      */
     final public static function byName($name)
     {
-        $instances = &static::getInstances();
+        $instance = self::tryByName($name);
 
-        if (!array_key_exists($name, $instances)) {
-            $instances[$name] = new static($name);
+        if ($instance === null) {
+            throw new Enum\Exception\InvalidInstance(get_called_class(), $name);
         }
 
-        return $instances[$name];
+        return $instance;
     }
 
     /**
@@ -233,7 +257,6 @@ abstract class Enum implements JsonSerializable
      */
     final public function when(Enum $a, $b)
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $map = new Enum\Matcher($this);
 
         return $map->when($a, $b);
@@ -290,7 +313,6 @@ abstract class Enum implements JsonSerializable
      */
     final public function whenDo(Enum $a, $b)
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $map = new Enum\Matcher($this);
 
         return $map->whenDo($a, $b);
