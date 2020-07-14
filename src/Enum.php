@@ -45,9 +45,9 @@ abstract class Enum implements JsonSerializable
      * For example:
      *
      * ```
-     * Fruit::byName('APPLE'); // Fruit::APPLE()
-     * Fruit::byName('BANANA'); // Fruit::BANANA()
-     * Fruit::byName('UNKNOWN'); // null
+     * Fruit::tryByName('APPLE'); // Fruit::APPLE()
+     * Fruit::tryByName('BANANA'); // Fruit::BANANA()
+     * Fruit::tryByName('UNKNOWN'); // null
      * ```
      *
      * @param string $name
