@@ -352,6 +352,34 @@ abstract class Enum implements JsonSerializable
     }
 
     /**
+     * Test if the provided collection contains all possible enum values.
+     *
+     * @param Enum[] $instances
+     *
+     * @return bool
+     */
+    final public static function isExhaustive(array $instances): bool
+    {
+        $allInstances = self::getAllInstances();
+
+        $missing = array_diff($allInstances, $instances);
+
+        return count($missing) === 0;
+    }
+
+    /**
+     * Test if the provided collection contains either none or all possible enum values.
+     *
+     * @param Enum[] $instances
+     *
+     * @return bool
+     */
+    final public static function isExhaustiveOrEmpty(array $instances): bool
+    {
+        return count($instances) === 0 || self::isExhaustive($instances);
+    }
+
+    /**
      * @param string $name
      * @param array  $arguments
      *
