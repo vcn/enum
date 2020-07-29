@@ -131,3 +131,16 @@ Fruit::APPLE()->getName(); // 'APPLE'
 
 Fruit::byName('APPLE'); // Fruit::APPLE()
 ```
+
+You can check a collection for exhaustiveness:
+
+```php
+<?php
+
+Fruit::isExhaustive([Fruit::APPLE()]); // false
+
+Fruit::isExhaustive([
+    Fruit::APPLE(),
+    Fruit::BANANA()
+]); // true
+```

@@ -195,4 +195,45 @@ class EnumTest extends TestCase
 
         Silly::CAULIFLOWER();
     }
+
+    public function testExhaustiveWhenEmpty()
+    {
+        self::assertFalse(Fruit::isExhaustive([]));
+    }
+
+    public function testExhaustiveWhenFull()
+    {
+        self::assertTrue(Fruit::isExhaustive(Fruit::getAllInstances()));
+    }
+
+    public function testExhaustiveWhenOne()
+    {
+        self::assertFalse(Fruit::isExhaustive([Fruit::APPLE()]));
+    }
+
+    public function testExhaustiveWithFullDuplicates()
+    {
+        self::assertTrue(
+            Fruit::isExhaustive([
+                Fruit::APPLE(),
+                Fruit::BANANA(),
+                Fruit::APPLE()
+            ])
+        );
+    }
+
+    public function testExhaustiveOrEmptyWhenEmpty()
+    {
+        self::assertTrue(Fruit::isExhaustiveOrEmpty([]));
+    }
+
+    public function testExhaustiveOrEmptyWhenFull()
+    {
+        self::assertTrue(Fruit::isExhaustiveOrEmpty(Fruit::getAllInstances()));
+    }
+
+    public function testExhaustiveOrEmptyWhenOne()
+    {
+        self::assertFalse(Fruit::isExhaustiveOrEmpty([Fruit::APPLE()]));
+    }
 }
