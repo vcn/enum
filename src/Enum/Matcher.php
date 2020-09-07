@@ -7,27 +7,38 @@ use Vcn\Lib\Enum;
 use Vcn\Lib\Enum\Matcher\Match;
 
 /**
+ * @template TEnum of Enum
+ * @template TResult
+ *
  * @internal
  */
 final class Matcher
 {
     /**
+     * @phpstan-var TEnum
+     *
      * @var Enum
      */
     private $subject;
 
     /**
+     * @phpstan-var array<Match<TResult>>
+     *
      * @var Match[] Map String Match
      */
     private $matches = array();
 
     /**
+     * @phpstan-var Match<TResult>
+     *
      * @var Match
      */
     private $surrogate;
 
     /**
      * Use `Enum::when()` instead.
+     *
+     * @phpstan-param TEnum $subject
      *
      * @param Enum $subject
      *
@@ -46,12 +57,17 @@ final class Matcher
     }
 
     /**
+     * @phpstan-param TEnum $enum
+     * @phpstan-param Match<TResult> $match
+     *
+     * @phpstan-return Matcher<TEnum, TResult>
+     *
      * @param Enum  $enum
      * @param Match $match
      *
      * @return Matcher
      */
-    private function whenMatch(Enum $enum, Match $match)
+    private function whenMatch(Enum $enum, Match $match): Matcher
     {
         if (!$enum instanceof $this->subject) {
             $classSubject  = get_class($this->subject);
@@ -107,6 +123,11 @@ final class Matcher
      *
      * `'apple'` if `$fruit = Fruit::APPLE()`
      *
+     * @phpstan-param TEnum $enum
+     * @phpstan-param TResult $value
+     *
+     * @phpstan-return Matcher<TEnum, TResult>
+     *
      * @param Enum  $enum  The Enum instance, must be an instance of the subject of this map.
      * @param mixed $value The value to map the given instance to.
      *
@@ -114,7 +135,7 @@ final class Matcher
      * @throws InvalidArgumentException If the given Enum is not an instance of the subject of this map, or if the given
      *                                  instance has already been mapped.
      */
-    public function when(Enum $enum, $value)
+    public function when(Enum $enum, $value): Matcher
     {
         /** @noinspection PhpInternalEntityUsedInspection */
         return $this->whenMatch($enum, new Match\Value($value));
@@ -163,27 +184,25 @@ final class Matcher
      * It is <strong>discouraged</strong> to throw checked exceptions since PHPStorm can't infer the corresponding
      * throws clauses on relevant methods.
      *
+     * @phpstan-param TEnum $enum
+     * @phpstan-param callable(): TResult $callable
+     *
+     * @phpstan-return Matcher<TEnum, TResult>
+     *
      * @param Enum     $enum
      * @param callable $callable
      *
      * @return Matcher
-     * @throws InvalidArgumentException If the given argument is not callable.
      */
-    public function whenDo(Enum $enum, $callable)
+    public function whenDo(Enum $enum, callable $callable): Matcher
     {
-        if (!is_callable($callable)) {
-            $type = is_object($callable) ? get_class($callable) : gettype($callable);
-
-            throw new InvalidArgumentException(
-                "Expected input argument to be callable, {$type} given. " .
-                "If you want to match a plain value, use Matcher::when() instead."
-            );
-        }
-
         return $this->whenMatch($enum, new Match\Callback($callable));
     }
 
     /**
+     * @phpstan-param Match<TResult> $match
+     * @phpstan-return TResult
+     *
      * @param Match $match
      *
      * @return mixed
@@ -227,6 +246,9 @@ final class Matcher
      * <br/>
      *
      * `'Some other fruit I did not know about?' if $fruit = Fruit::EGGPLANT();`
+     *
+     * @phpstan-param TResult $value
+     * @phpstan-return TResult
      *
      * @param mixed $value The surrogate value to return if the instance has not been mapped to anything
      *
@@ -278,27 +300,22 @@ final class Matcher
      * It is <strong>discouraged</strong> to throw checked exceptions since PHPStorm can't infer the corresponding
      * throws clause on this method.
      *
+     * @phpstan-param callable(): TResult
+     * @phpstan-return TResult
+     *
      * @param callable $callable
      *
      * @return mixed
-     * @throws InvalidArgumentException If the given argument is not callable.
      */
-    public function orElseDo($callable)
+    public function orElseDo(callable $callable)
     {
-        if (!is_callable($callable)) {
-            $type = is_object($callable) ? get_class($callable) : gettype($callable);
-
-            throw new InvalidArgumentException(
-                "Expected input argument to be callable, {$type} given. " .
-                "If you want to provide a plain value as a surrogate, use Matcher::orElse() instead."
-            );
-        }
-
         return $this->orElseMatch(new Match\Callback($callable));
     }
 
     /**
      * `Matcher::orElseDo` passing `noop`.
+     *
+     * @phpstan-return TResult
      *
      * @return mixed
      */
@@ -343,6 +360,8 @@ final class Matcher
      * <br/>
      *
      * a thrown exception if `$fruit = Fruit::EGGPLANT()`
+     *
+     * @phpstan-return TResult
      *
      * @return mixed
      * @throws Enum\Matcher\Exception\MatchExhausted
