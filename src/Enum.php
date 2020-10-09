@@ -200,6 +200,8 @@ abstract class Enum implements JsonSerializable
      * Returns the FQCN of Enum.
      * `Fruit::getEnumBaseClass` is equivalent to `Enum::class`.
      *
+     * @phpstan-return class-string<self>
+     *
      * @return string
      */
     final public static function getEnumBaseClass()
@@ -210,6 +212,8 @@ abstract class Enum implements JsonSerializable
     /**
      * Returns the specific FQCN of the specific Enum.
      * `Fruit::getClass()` is equivalent to `Fruit::class`.
+     *
+     * @phpstan-return class-string<static>
      *
      * @return string
      */
@@ -250,12 +254,17 @@ abstract class Enum implements JsonSerializable
      *
      * `'apple'` if `$fruit = Fruit::APPLE()`
      *
-     * @param Enum  $a
+     * @template T
+     *
+     * @phpstan-param T $b
+     * @phpstan-return Enum\Matcher<static, T>
+     *
+     * @param static $a
      * @param mixed $b
      *
      * @return Enum\Matcher
      */
-    final public function when(Enum $a, $b)
+    final public function when(Enum $a, $b): Enum\Matcher
     {
         $map = new Enum\Matcher($this);
 
@@ -305,13 +314,16 @@ abstract class Enum implements JsonSerializable
      * It is <strong>discouraged</strong> to throw checked exceptions since PHPStorm can't infer the corresponding
      * throws clauses on relevant methods.
      *
-     * @param Enum     $a
+     * @template T
+     * @phpstan-param callable(): T $b
+     * @phpstan-return Enum\Matcher<static, T>
+     *
+     * @param static   $a
      * @param callable $b
      *
      * @return Enum\Matcher
-     * @throws InvalidArgumentException If the given argument is not callable.
      */
-    final public function whenDo(Enum $a, $b)
+    final public function whenDo(Enum $a, callable $b)
     {
         $map = new Enum\Matcher($this);
 
@@ -334,7 +346,7 @@ abstract class Enum implements JsonSerializable
      * Fruit::APPLE()->equals(VEGETABLE::SPINACH()); // exception
      * ```
      *
-     * @param Enum $b
+     * @param static $b
      *
      * @return bool
      * @throws InvalidArgumentException If $b is not of the same type as this Enum.
@@ -354,7 +366,7 @@ abstract class Enum implements JsonSerializable
     /**
      * Test if the provided collection contains all possible enum values.
      *
-     * @param Enum[] $instances
+     * @param static[] $instances
      *
      * @return bool
      */
@@ -370,7 +382,7 @@ abstract class Enum implements JsonSerializable
     /**
      * Test if the provided collection contains either none or all possible enum values.
      *
-     * @param Enum[] $instances
+     * @param static[] $instances
      *
      * @return bool
      */

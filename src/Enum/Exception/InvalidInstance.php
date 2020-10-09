@@ -6,9 +6,14 @@ use Exception;
 use InvalidArgumentException;
 use Vcn\Lib\Enum;
 
+/**
+ * @template TEnum of Enum
+ */
 class InvalidInstance extends Exception
 {
     /**
+     * @phpstan-var class-string<TEnum>
+     *
      * @var string
      */
     private $className;
@@ -19,6 +24,8 @@ class InvalidInstance extends Exception
     private $invalidName;
 
     /**
+     * @phpstan-param class-string<TEnum> $className
+     *
      * @param string         $className       FQCN of the enum.
      * @param string         $invalidInstance The enum constant that could not be found.
      * @param int            $code
@@ -66,6 +73,8 @@ class InvalidInstance extends Exception
     /**
      * Alias of `getClassName`, use that instead.
      *
+     * @phpstan-return class-string<TEnum>
+     *
      * @return string
      *
      * @see getClassName()
@@ -78,6 +87,8 @@ class InvalidInstance extends Exception
     }
 
     /**
+     * @phpstan-return class-string<TEnum>
+     *
      * @return string
      */
     public function getClassName()
@@ -108,6 +119,8 @@ class InvalidInstance extends Exception
     }
 
     /**
+     * @phpstan-return array<TEnum>
+     *
      * @return Enum[]
      */
     public function getValidInstances()
