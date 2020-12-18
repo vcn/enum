@@ -5,6 +5,7 @@ namespace Vcn\Lib\Enum;
 use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 use Vcn\Lib\Enum;
 use Vcn\Lib\EnumTest\Fruit;
 use Vcn\Lib\EnumTest\Vegetables;
@@ -114,7 +115,7 @@ class MatcherTest extends TestCase
     {
         $matcher = new Matcher(Vegetables::CAULIFLOWER());
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
 
         /** @noinspection PhpParamsInspection */
         $matcher
@@ -170,7 +171,7 @@ class MatcherTest extends TestCase
     {
         $matcher = new Matcher(Vegetables::CAULIFLOWER());
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
 
         /** @noinspection PhpParamsInspection */
         $matcher
