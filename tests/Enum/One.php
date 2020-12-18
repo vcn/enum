@@ -2,9 +2,9 @@
 
 namespace Vcn\Lib\Enum;
 
-use Vcn\Lib\Enum\Matcher\Match;
+use Vcn\Lib\Enum\Matcher\Value;
 
-class One implements Match
+class One implements Value
 {
     /**
      * @inheritdoc
