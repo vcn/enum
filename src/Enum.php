@@ -19,17 +19,17 @@ abstract class Enum implements JsonSerializable
     /**
      * @var string[][]
      */
-    private static $constantsArray = array();
+    private static $constantsArray = [];
 
     /**
      * @var static[][]
      */
-    private static $instancesArray = array();
+    private static $instancesArray = [];
 
     /**
      * @var bool[]
      */
-    private static $parentIsEnumArray = array();
+    private static $parentIsEnumArray = [];
 
     /**
      * @param string $name
@@ -217,7 +217,7 @@ abstract class Enum implements JsonSerializable
      *
      * @return string
      */
-    final public static function getClass()
+    final public static function getClass(): string
     {
         return get_called_class();
     }
@@ -323,7 +323,7 @@ abstract class Enum implements JsonSerializable
      *
      * @return Enum\Matcher
      */
-    final public function whenDo(Enum $a, callable $b)
+    final public function whenDo(Enum $a, callable $b): Enum\Matcher
     {
         $map = new Enum\Matcher($this);
 
@@ -351,7 +351,7 @@ abstract class Enum implements JsonSerializable
      * @return bool
      * @throws InvalidArgumentException If $b is not of the same type as this Enum.
      */
-    final public function equals(Enum $b)
+    final public function equals(Enum $b): bool
     {
         $aClass = get_class($this);
         $bClass = get_class($b);
@@ -443,7 +443,7 @@ abstract class Enum implements JsonSerializable
      * @return string
      * @internal
      */
-    public function __toString()
+    public function __toString(): string
     {
         return static::getClass() . '::' . $this->constName . '()';
     }

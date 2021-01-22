@@ -4,7 +4,6 @@ namespace Vcn\Lib\Enum;
 
 use InvalidArgumentException;
 use Vcn\Lib\Enum;
-use Vcn\Lib\Enum\Matcher\Match;
 
 /**
  * @template TEnum of Enum
@@ -16,22 +15,18 @@ final class Matcher
 {
     /**
      * @phpstan-var TEnum
-     *
-     * @var Enum
      */
-    private $subject;
+    private Enum $subject;
 
     /**
-     * @phpstan-var array<Match<TResult>>
+     * @phpstan-var array<callable(): TResult>
      *
-     * @var Match[] Map String Match
+     * @var callable[] Map String Match
      */
-    private $matches = array();
+    private array $callables = [];
 
     /**
-     * @phpstan-var Match<TResult>
-     *
-     * @var Match
+     * @phpstan-var callable(): TResult
      */
     private $surrogate;
 
@@ -40,8 +35,6 @@ final class Matcher
      *
      * @phpstan-param TEnum $subject
      *
-     * @param Enum $subject
-     *
      * @see Enum::when()
      *
      * @internal
@@ -49,25 +42,20 @@ final class Matcher
     public function __construct(Enum $subject)
     {
         $this->subject   = $subject;
-        $this->surrogate = new Match\Callback(
-            function () use ($subject) {
-                throw new Matcher\Exception\MatchExhausted($subject);
-            }
-        );
+        $this->surrogate = function () use ($subject) {
+            throw new Matcher\Exception\MatchExhausted($subject);
+        };
     }
 
     /**
      * @phpstan-param TEnum $enum
-     * @phpstan-param Match<TResult> $match
+     * @phpstan-param callable(): TResult $callable
      *
      * @phpstan-return Matcher<TEnum, TResult>
      *
-     * @param Enum  $enum
-     * @param Match $match
-     *
      * @return Matcher
      */
-    private function whenMatch(Enum $enum, Match $match): Matcher
+    private function whenMatch(Enum $enum, callable $callable): Matcher
     {
         if (!$enum instanceof $this->subject) {
             $classSubject  = get_class($this->subject);
@@ -79,14 +67,13 @@ final class Matcher
             );
         }
 
-        if (array_key_exists($enum->getName(), $this->matches)) {
+        if (array_key_exists($enum->getName(), $this->callables)) {
             throw new InvalidArgumentException(
                 "This map has already mapped instance {$enum} to a value."
             );
         }
 
-        /** @noinspection PhpInternalEntityUsedInspection */
-        $this->matches[$enum->getName()] = $match;
+        $this->callables[$enum->getName()] = $callable;
 
         return $this;
     }
@@ -137,8 +124,7 @@ final class Matcher
      */
     public function when(Enum $enum, $value): Matcher
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
-        return $this->whenMatch($enum, new Match\Value($value));
+        return $this->whenMatch($enum, fn () => $value);
     }
 
     /**
@@ -189,29 +175,22 @@ final class Matcher
      *
      * @phpstan-return Matcher<TEnum, TResult>
      *
-     * @param Enum     $enum
-     * @param callable $callable
-     *
      * @return Matcher
      */
     public function whenDo(Enum $enum, callable $callable): Matcher
     {
-        return $this->whenMatch($enum, new Match\Callback($callable));
+        return $this->whenMatch($enum, $callable);
     }
 
     /**
-     * @phpstan-param Match<TResult> $match
+     * @phpstan-param callable(): TResult $callable
      * @phpstan-return TResult
-     *
-     * @param Match $match
      *
      * @return mixed
      */
-    private function orElseMatch(Match $match)
+    private function orElseMatch(callable $callable)
     {
-        return array_key_exists($this->subject->getName(), $this->matches)
-            ? $this->matches[$this->subject->getName()]->get()
-            : $match->get();
+        return ($this->callables[$this->subject->getName()] ?? $callable)();
     }
 
     /**
@@ -256,7 +235,7 @@ final class Matcher
      */
     public function orElse($value)
     {
-        return $this->orElseMatch(new Match\Value($value));
+        return $this->orElseMatch(fn () => $value);
     }
 
     /**
@@ -300,7 +279,7 @@ final class Matcher
      * It is <strong>discouraged</strong> to throw checked exceptions since PHPStorm can't infer the corresponding
      * throws clause on this method.
      *
-     * @phpstan-param callable(): TResult
+     * @phpstan-param callable(): TResult $callable
      * @phpstan-return TResult
      *
      * @param callable $callable
@@ -309,7 +288,7 @@ final class Matcher
      */
     public function orElseDo(callable $callable)
     {
-        return $this->orElseMatch(new Match\Callback($callable));
+        return $this->orElseMatch($callable);
     }
 
     /**
@@ -368,8 +347,6 @@ final class Matcher
      */
     public function get()
     {
-        return array_key_exists($this->subject->getName(), $this->matches)
-            ? $this->matches[$this->subject->getName()]->get()
-            : $this->surrogate->get();
+        return $this->orElseDo($this->surrogate);
     }
 }

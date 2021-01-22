@@ -73,8 +73,7 @@ final class Fruit extends Enum {
 }
 ```
 
-(The constant values (0s) are meaningless, but required by PHP. In versions before 7.1, that only support public    
-constant members, it is recommended to not abuse them.)
+(The constant values (0s) are meaningless, but required by PHP.)
 
 This will expose the labels as magic static methods `Fruit::APPLE()` and `Fruit::BANANA()`.
 They serve as the constructors of the corresponding labels.
