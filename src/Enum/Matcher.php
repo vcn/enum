@@ -48,10 +48,12 @@ final class Matcher
     }
 
     /**
-     * @phpstan-param TEnum $enum
-     * @phpstan-param callable(): TResult $callable
+     * @template UResult
      *
-     * @phpstan-return Matcher<TEnum, TResult>
+     * @phpstan-param TEnum $enum
+     * @phpstan-param callable(): TResult|UResult $callable
+     *
+     * @phpstan-return Matcher<TEnum, TResult|UResult>
      *
      * @return Matcher
      */
@@ -110,10 +112,12 @@ final class Matcher
      *
      * `'apple'` if `$fruit = Fruit::APPLE()`
      *
-     * @phpstan-param TEnum $enum
-     * @phpstan-param TResult $value
+     * @template UResult
      *
-     * @phpstan-return Matcher<TEnum, TResult>
+     * @phpstan-param TEnum $enum
+     * @phpstan-param TResult|UResult $value
+     *
+     * @phpstan-return Matcher<TEnum, TResult|UResult>
      *
      * @param Enum  $enum  The Enum instance, must be an instance of the subject of this map.
      * @param mixed $value The value to map the given instance to.
@@ -170,10 +174,12 @@ final class Matcher
      * It is <strong>discouraged</strong> to throw checked exceptions since PHPStorm can't infer the corresponding
      * throws clauses on relevant methods.
      *
-     * @phpstan-param TEnum $enum
-     * @phpstan-param callable(): TResult $callable
+     * @template UResult
      *
-     * @phpstan-return Matcher<TEnum, TResult>
+     * @phpstan-param TEnum $enum
+     * @phpstan-param callable(): (TResult|UResult) $callable
+     *
+     * @phpstan-return Matcher<TEnum, TResult|UResult>
      *
      * @return Matcher
      */
@@ -226,8 +232,10 @@ final class Matcher
      *
      * `'Some other fruit I did not know about?' if $fruit = Fruit::EGGPLANT();`
      *
-     * @phpstan-param TResult $value
-     * @phpstan-return TResult
+     * @template UResult
+     *
+     * @phpstan-param TResult|UResult $value
+     * @phpstan-return TResult|UResult
      *
      * @param mixed $value The surrogate value to return if the instance has not been mapped to anything
      *
@@ -279,8 +287,10 @@ final class Matcher
      * It is <strong>discouraged</strong> to throw checked exceptions since PHPStorm can't infer the corresponding
      * throws clause on this method.
      *
-     * @phpstan-param callable(): TResult $callable
-     * @phpstan-return TResult
+     * @template UResult
+     *
+     * @phpstan-param callable(): TResult|UResult $callable
+     * @phpstan-return TResult|UResult
      *
      * @param callable $callable
      *
@@ -294,7 +304,7 @@ final class Matcher
     /**
      * `Matcher::orElseDo` passing `noop`.
      *
-     * @phpstan-return TResult
+     * @phpstan-return null|TResult
      *
      * @return mixed
      */
