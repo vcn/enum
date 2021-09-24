@@ -51,7 +51,7 @@ final class Matcher
      * @template UResult
      *
      * @phpstan-param TEnum $enum
-     * @phpstan-param callable(): TResult|UResult $callable
+     * @phpstan-param callable(): UResult $callable
      *
      * @phpstan-return Matcher<TEnum, TResult|UResult>
      *
@@ -115,7 +115,7 @@ final class Matcher
      * @template UResult
      *
      * @phpstan-param TEnum $enum
-     * @phpstan-param TResult|UResult $value
+     * @phpstan-param UResult $value
      *
      * @phpstan-return Matcher<TEnum, TResult|UResult>
      *
@@ -177,7 +177,7 @@ final class Matcher
      * @template UResult
      *
      * @phpstan-param TEnum $enum
-     * @phpstan-param callable(): (TResult|UResult) $callable
+     * @phpstan-param callable(): UResult $callable
      *
      * @phpstan-return Matcher<TEnum, TResult|UResult>
      *
@@ -189,7 +189,9 @@ final class Matcher
     }
 
     /**
-     * @phpstan-param callable(): TResult $callable
+     * @template UResult
+     *
+     * @phpstan-param callable(): UResult $callable
      * @phpstan-return TResult
      *
      * @return mixed
@@ -234,7 +236,7 @@ final class Matcher
      *
      * @template UResult
      *
-     * @phpstan-param TResult|UResult $value
+     * @phpstan-param UResult $value
      * @phpstan-return TResult|UResult
      *
      * @param mixed $value The surrogate value to return if the instance has not been mapped to anything
@@ -289,7 +291,7 @@ final class Matcher
      *
      * @template UResult
      *
-     * @phpstan-param callable(): TResult|UResult $callable
+     * @phpstan-param callable(): UResult $callable
      * @phpstan-return TResult|UResult
      *
      * @param callable $callable
