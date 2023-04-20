@@ -1,8 +1,9 @@
 {
   "name": "vcn/enum",
   "type": "library",
-  "description": "Enumeration data types with pattern match operations.",
+  "description": "[Deprecated] Enumeration data types with pattern match operations. This package is obsolete because PHP has native enums now.",
   "license": "MIT",
+  "abandoned": true,
 
   "autoload": {
     "psr-4": {
